@@ -12,16 +12,30 @@ namespace todolist_mongo
     {
         static void Main(string[] args)
         {
-            try
+            
+            MongoClient client = new MongoClient("mongodb://localhost:27017");
+
+
+            // create database
+            IMongoDatabase db = client.GetDatabase("independent");
+
+            // create collection
+            var collection = db.GetCollection<BsonDocument>("tasks");
+
+            var document = new BsonDocument
             {
-                MongoClient client = new MongoClient("mongodb://127.0.0.1:27017");
+                {"name", new BsonString("walk the dog")}
+            };
 
-                // get database
-                IMongoDatabase db = client.GetDatabase("independent");
+            collection.InsertOne(document);
 
-                // get collections
-                var collections = db.ListCollections().ToList();
-            }
+            Console.ReadLine();
+            db.DropCollection("tasks");
+
+            Console.ReadLine();
+            client.DropDatabase("independent");
+
+            Console.ReadLine();
         }
     }
 }
